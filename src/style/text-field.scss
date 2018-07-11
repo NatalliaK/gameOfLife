@@ -1,0 +1,12 @@
+.text-field {
+	display: inline-block;
+
+	border: 1px solid black;
+	vertical-align: middle;
+
+	line-height: 50%;
+	letter-spacing: -0.07em;
+	color: $dark-green;
+
+	background-color: $bg-green;
+}
