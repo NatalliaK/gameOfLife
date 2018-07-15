@@ -1,24 +1,18 @@
 import {eventBus} from '../index';
-import GetMatrixGame from './../matrix/matrix';
 
-export default class TextField extends GetMatrixGame {
-	constructor(param) {
-		super(param);
-		this.eventBus = eventBus;
-		this.drawTextField();
-	}
-
-	drawTextField() {
-		this.getTextField();
-		this.eventBus.on('drawNewGameField', (value) => {
-		this.col = value.col;
-		this.row = value.row;
-		this.getTextField();
+export default class TextField {
+	constructor() {
+		eventBus.on('field: drawGameField', (param) => {
+			this.arr = param.arr;
+			this.SIZE_CELL = param.SIZE_CELL;
+			this.htmlEl = param.htmlEl;
+			this.getTextField();
 		});
+		//eventBus.trigger('field: drawGameField', {arr: this.arr, SIZE_CELL: this.SIZE_CELL, htmlEl: this.htmlEl});
 	}
+
 
 	getTextField() {
-		console.log(this.col, this.row);
 		this.field = '';
 		if (!document.querySelector('pre')) {
 			var pre = document.createElement('pre');
@@ -27,7 +21,7 @@ export default class TextField extends GetMatrixGame {
 		} else {
 			pre = document.querySelector('pre');
 		}
-		pre.style.fontSize = this.SIZE_CELL * 2 + 'px';
+		pre.style.fontSize = this.SIZE_CELL / 4.2 + 'vh';
 
 		for (let i = 0; i < this.arr.length; i++) {
 			for (let j = 0; j < this.arr[i].length; j++) {

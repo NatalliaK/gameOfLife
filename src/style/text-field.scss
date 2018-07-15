@@ -1,11 +1,15 @@
 .text-field {
 	display: inline-block;
+	width: inherit;
+	height: 100%;
 
 	border: 1px solid black;
 	vertical-align: middle;
 
-	line-height: 50%;
-	letter-spacing: -0.07em;
+	line-height: 78%;
+	letter-spacing: -0.09em;
+	font-family: $rubic;
+
 	color: $dark-green;
 
 	background-color: $bg-green;
