@@ -1,30 +1,46 @@
 import EventBus from './utils/EventBus';
 import Router from './utils/router';
 import drawPageAbout from './about/about';
-import Controls from './controls/controls';
+import GetMatrixGame from './matrix/matrix';
 import TextField from './textField/textField';
 import CanvasField from './canvasField/canvasField';
 import SvgField from './svgField/svgField';
 
 export const eventBus = new EventBus();
-const main = document.querySelector('#main');
+const about = document.querySelector('#about');
+const controls = document.querySelector('#controls');
+const fieldCont = document.querySelector('#game-field');
+var state = {count: 1};
+var game = new GetMatrixGame({state: state, controlsCont: controls, fieldCont: fieldCont});
+
+document.querySelector('#new-game').addEventListener('click', _ => {
+	document.querySelector('#btn-play').innerHTML = '<img id="play" src="img/play.png" class="controls__img">';
+	state = {};
+	state.count = 1;
+	//game.drawNewField();
+	eventBus.trigger('newGame');
+	eventBus.trigger('matrix: stopGame');
+});
 
 eventBus.on('drawPageAbout', drawPageAbout);
-eventBus.on('initTextField', TextField);
-// eventBus.trigger('subscribeToClick');
-// eventBus.trigger('play');
 
 var router = new Router({
 	routes: [
 		{
 			name: 'About',
 			match: '',
+			onBeforeEnter: () => {
+				controls.classList.add('hide');
+				eventBus.trigger('matrix: stopGame');
+			},
+
 			onEnter: () => {
-				eventBus.trigger('drawPageAbout', main);
+				eventBus.trigger('drawPageAbout', about);
 			},
 
 			onLeave: () => {
-				main.innerHTML = '';
+				about.innerHTML = '';
+				controls.classList.remove('hide');
 			}
 		},
 
@@ -32,31 +48,12 @@ var router = new Router({
 			name: 'text',
 			match: 'text',
 			onEnter: () => {
-
-				var field = document.createElement('div');
-				field.id = 'game-field';
-				field.classList.add('main__game-field');
-
-				if (!main.childNodes.length) {
-					main.innerHTML = '<div id="controls"></div>';
-
-					let controls = document.querySelector('#controls');
-					new Controls(controls);
-				}
-
-				main.insertAdjacentHTML('afterBegin', '<div id="game-field" class="main__game-field"></div>');
-
-				let row = main.querySelector('#x').options[main.querySelector('#x').selectedIndex].value;
-				let col = main.querySelector('#y').options[main.querySelector('#y').selectedIndex].value;
-				new TextField({ htmlEl: document.querySelector('#game-field'), row: row, col: col});
-
-				// eventBus.on('play', () => {
-				// 	console.log('play');
-				// });
+				new TextField(state, fieldCont);
 			},
 
 			onLeave: () => {
-				document.querySelector('#game-field').remove();
+				fieldCont.innerHTML = '';
+				eventBus.off('field: drawGameField');
 			}
 		},
 
@@ -64,28 +61,12 @@ var router = new Router({
 			name: 'canvas',
 			match: 'canvas',
 			onEnter: () => {
-				if (!main.childNodes.length) {
-					main.innerHTML = '<div id="game-field" class="main__game-field"></div><div id="controls"></div>';
-					var field = document.querySelector('#game-field');
-					var controls = document.querySelector('#controls');
-
-					new Controls(controls);
-
-				} else {
-					field = document.createElement('div');
-					field.id = 'game-field';
-					controls = document.querySelector('#controls');
-					main.insertBefore(field, controls);
-				}
-
-				let row = main.querySelector('#x').options[main.querySelector('#x').selectedIndex].value;
-				let col = main.querySelector('#y').options[main.querySelector('#y').selectedIndex].value;
-
-				new CanvasField({ htmlEl: field, row: row, col: col});
+				new CanvasField(state, fieldCont);
 			},
 
 			onLeave: () => {
-				document.querySelector('#game-field').remove();
+				fieldCont.innerHTML = '';
+				eventBus.off('field: drawGameField');
 			}
 		},
 
@@ -93,27 +74,12 @@ var router = new Router({
 			name: 'SVG',
 			match: 'svg',
 			onEnter: () => {
-				if (!main.childNodes.length) {
-					main.innerHTML = '<div id="game-field" class="main__game-field"></div><div id="controls"></div>';
-					var field = document.querySelector('#game-field');
-					var controls = document.querySelector('#controls');
-					new Controls(controls);
-
-				} else {
-					field = document.createElement('div');
-					field.id = 'game-field';
-					controls = document.querySelector('#controls');
-					main.insertBefore(field, controls);
-				}
-
-				let row = main.querySelector('#x').options[main.querySelector('#x').selectedIndex].value;
-				let col = main.querySelector('#y').options[main.querySelector('#y').selectedIndex].value;
-
-				new SvgField({col: col, row: row, htmlEl: field});
+				new SvgField(state, fieldCont);
 			},
 
 			onLeave: () => {
-				document.querySelector('#game-field').remove();
+				fieldCont.innerHTML = '';
+				eventBus.off('field: drawGameField');
 			}
 		}
 		]});

@@ -1,27 +1,21 @@
 import {eventBus} from '../index';
-import GetMatrixGame from './../matrix/matrix';
 
-export default class SvgField extends GetMatrixGame {
-	constructor(param) {
-		super(param);
-		this.eventBus = eventBus;
-		this.drawSvgField();
-	}
-
-	drawSvgField() {
-		this.getSvgField();
-		eventBus.on('getSizeGameField', (value) => {
-			this.col = value.col;
-			this.row = value.row;
+export default class SvgField {
+	constructor(state, htmlEl) {
+		this.SIZE_CELL = state.SIZE_CELL;
+		this.arr = state[state.count];
+		this.htmlEl = htmlEl;
+		eventBus.on('field: drawGameField', (param) => {
+			this.arr = param.arr;
+			this.SIZE_CELL = param.SIZE_CELL;
+			this.htmlEl = param.htmlEl;
 			this.getSvgField();
 		});
+		eventBus.trigger('field: drawGameField', {arr: this.arr, SIZE_CELL: this.SIZE_CELL, htmlEl: this.htmlEl});
 	}
 
 	getSvgField() {
 		const SVG_NS  = "http://www.w3.org/2000/svg";
-
-		this.arr = this.createArray();
-		this.SIZE_CELL = this.getSizeCell();
 
 		if (document.querySelector('#game-field').childNodes.length) {
 			this.field = document.querySelector('#field');
@@ -39,8 +33,8 @@ export default class SvgField extends GetMatrixGame {
 
 		this.field.appendChild(this.fieldWrap);
 
-		this.field.setAttribute('width', this.col * this.SIZE_CELL);
-		this.field.setAttribute('height', this.row * this.SIZE_CELL);
+		this.field.setAttribute('width', this.arr[0].length * this.SIZE_CELL);
+		this.field.setAttribute('height', this.arr.length * this.SIZE_CELL);
 
 
 		for (let i = 0; i < this.arr.length; i++) {

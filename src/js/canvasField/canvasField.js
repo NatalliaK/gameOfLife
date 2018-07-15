@@ -1,25 +1,20 @@
 import {eventBus} from '../index';
-import GetMatrixGame from './../matrix/matrix';
 
-export default class CanvasField extends GetMatrixGame {
-	constructor(param) {
-		super(param);
-		this.eventBus = eventBus;
-		this.drawCanvasField();
-	}
-
-	drawCanvasField() {
-		this.getCanvasField();
-		this.eventBus.on('getSizeGameField', (value) => {
-			this.col = value.col;
-			this.row = value.row;
+export default class CanvasField {
+	constructor(state, htmlEl) {
+		this.SIZE_CELL = state.SIZE_CELL;
+		this.arr = state[state.count];
+		this.htmlEl = htmlEl;
+		eventBus.on('field: drawGameField', (param) => {
+			this.arr = param.arr;
+			this.SIZE_CELL = param.SIZE_CELL;
+			this.htmlEl = param.htmlEl;
 			this.getCanvasField();
 		});
+		eventBus.trigger('field: drawGameField', {arr: this.arr, SIZE_CELL: this.SIZE_CELL, htmlEl: this.htmlEl});
 	}
 
 	getCanvasField() {
-		this.arr = this.createArray();
-		this.SIZE_CELL = this.getSizeCell();
 		if (!document.querySelector('#canvas')) {
 			this.canvas = document.createElement('canvas');
 			this.canvas.id = 'canvas';
@@ -29,8 +24,8 @@ export default class CanvasField extends GetMatrixGame {
 		}
 		this.ctx = this.canvas.getContext('2d');
 		this.htmlEl.appendChild(this.canvas);
-		this.canvas.width = this.SIZE_CELL * this.col;
-		this.canvas.height = this.SIZE_CELL * this.row;
+		this.canvas.width = this.SIZE_CELL * this.arr[0].length;
+		this.canvas.height = this.SIZE_CELL * this.arr.length;
 		this.canvas.style.backgroundColor = '#a7d66c';
 		var img = new Image();
 		drawPict(this.arr, this.ctx, this.SIZE_CELL);
