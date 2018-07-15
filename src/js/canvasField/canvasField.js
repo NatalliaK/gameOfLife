@@ -1,14 +1,17 @@
 import {eventBus} from '../index';
 
 export default class CanvasField {
-	constructor() {
+	constructor(state, htmlEl) {
+		this.SIZE_CELL = state.SIZE_CELL;
+		this.arr = state[state.count];
+		this.htmlEl = htmlEl;
 		eventBus.on('field: drawGameField', (param) => {
-			console.log(param);
 			this.arr = param.arr;
 			this.SIZE_CELL = param.SIZE_CELL;
 			this.htmlEl = param.htmlEl;
 			this.getCanvasField();
 		});
+		eventBus.trigger('field: drawGameField', {arr: this.arr, SIZE_CELL: this.SIZE_CELL, htmlEl: this.htmlEl});
 	}
 
 	getCanvasField() {

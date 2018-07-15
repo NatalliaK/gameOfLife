@@ -7,17 +7,26 @@ export default class GetMatrixGame {
 		this.fieldCont = param.fieldCont;
 		this.controls = new Controls(this.controlsCont);
 		this.state = param.state;
-		this.count = this.state.count || 1;
+		this.count = this.state.count;
 		this.init();
 	}
 
 	init() {
 		console.log('init');
-		this.drawNewField();
+		this.timer;
+		this.sizeField = this.controls.setSizeField();
+		this.row = +this.sizeField.row;
+		this.col = +this.sizeField.col;
+		this.arr = this.createMatrix();
+		this.state.SIZE_CELL = this.getSizeCell();
+		this.state[this.count] = this.arr;
+		this.state.count = this.count;
+		this.SIZE_CELL = this.state.SIZE_CELL;
 		eventBus.once('clickField', this.clickToCell.bind(this));
 		eventBus.on('changeSizeGameField', this.drawNewField.bind(this));
-		eventBus.on('matrix: playGame', this.playGame.bind(this));
-		eventBus.on('matrix: stopGame', this.stopGame.bind(this));
+		// eventBus.on('matrix: playGame', this.playGame.bind(this));
+		// eventBus.on('matrix: stopGame', this.stopGame.bind(this));
+		eventBus.on('newGame', this.drawNewField.bind(this));
 		this.changeViewGameField();
 		this.fieldCont.addEventListener('click', this.clickToCell.bind(this));
 		this.createNextStep();
@@ -25,14 +34,14 @@ export default class GetMatrixGame {
 	}
 
 	drawNewField() {
-		this.timer;
 		this.sizeField = this.controls.setSizeField();
 		this.row = +this.sizeField.row;
 		this.col = +this.sizeField.col;
-		this.arr = this.state[this.count] || this.createMatrix();
+		this.arr = this.createMatrix();
 		this.SIZE_CELL = this.getSizeCell();
 		this.state[this.count] = this.arr;
-		this.state.count = this.count;
+		this.count = this.state.count;
+		this.state.SIZE_CELL = this.SIZE_CELL;
 		eventBus.trigger('field: drawGameField', {arr: this.arr, SIZE_CELL: this.SIZE_CELL, htmlEl: this.fieldCont});
 	}
 
@@ -124,7 +133,6 @@ export default class GetMatrixGame {
 
 			this.arr = nextArr;
 			this.count++;
-			console.log(this.count);
 			this.state[this.count] = this.arr;
 			this.state.count = this.count;
 			eventBus.trigger('field: drawGameField', {arr: this.state[this.count], SIZE_CELL: this.SIZE_CELL, htmlEl: this.fieldCont});
@@ -145,15 +153,22 @@ export default class GetMatrixGame {
 		});
 	}
 
-	playGame(speed) {
-		this.timer = setInterval( _ => {
-			eventBus.trigger('matrix: nextStep');
-		}, 1000 * 1.5 / speed);
-	}
+	// playGame(speed) {
+	// 	this.timer = setInterval( _ => {
+	// 		eventBus.trigger('matrix: nextStep');
+	// 	}, 1000 * 1.5 / speed);
+	// }
+	//
+	// stopGame() {
+	// 	clearInterval(this.timer);
+	// }
 
-	stopGame() {
-		clearInterval(this.timer);
-	}
+	// newGame() {
+	// 	eventBus.trigger('stopGame');
+	// 	this.fieldCont.parentNode.querySelector('#btn-play').innerHTML = '<img src="img/play.png" class="controls__img">';
+	// 	this.count = 1;
+	// 	return this.count;
+	// }
 
 	gameOver() {
 		var stopGame = true;
@@ -173,12 +188,7 @@ export default class GetMatrixGame {
 		if (stopGame === true) {
 			console.log('Конец игры!');
 			eventBus.trigger('matrix: stopGame');
-			this.fieldCont.parentNode.querySelector('#btn-play').innerHTML = '<img src="img/pause.png" class="controls__img">';
-			// eventBus.off('changeSizeGameField');
-			// eventBus.off('matrix: playGame');
-			// eventBus.off('matrix: stopGame');
-			// eventBus.off('matrix: clickGameField');
-			//delete eventBus.listeners;
+			this.fieldCont.parentNode.querySelector('#btn-play').innerHTML = '<img src="img/play.png" class="controls__img">';
 		}
 	}
 }

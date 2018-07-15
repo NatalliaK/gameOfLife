@@ -3,11 +3,12 @@ import {eventBus} from '../index';
 export default class Controls {
 	constructor(htmlEl) {
 		this.htmlEl = htmlEl;
-
-		this.render();
+		this.timer;
+		eventBus.on('matrix: playGame', this.playGame.bind(this));
+		eventBus.on('matrix: stopGame', this.stopGame.bind(this));
 		eventBus.on('setSpeedGame', this.setSpeedGame.bind(this));
 
-		this.htmlEl.querySelector('#btn-play').addEventListener('click', (e) => {
+		this.htmlEl.querySelector('#btn-play').addEventListener('click', e => {
 			let parentEl = e.target.parentNode;
 			if (e.target.id === 'play') {
 				parentEl.innerHTML = '<img id="pause" src="img/pause.png" class="controls__img">';
@@ -28,7 +29,7 @@ export default class Controls {
 			eventBus.trigger('matrix: prevStep');
 		});
 
-		this.htmlEl.addEventListener('change', (e) => {
+		this.htmlEl.addEventListener('change', e => {
 			if (e.target.tagName === 'SELECT') {
 			eventBus.trigger('changeSizeGameField', this.setSizeField.bind(this));
 			} else if(e.target.id === 'speed' && this.htmlEl.querySelector('#pause')) {
@@ -36,10 +37,12 @@ export default class Controls {
 				eventBus.trigger('matrix: playGame', this.setSpeedGame());
 			}
 		});
-	}
 
-	render() {
-		this.htmlEl.innerHTML = `<button id="btn-back"><img src="img/back.png" class="controls__img"></button><button id="btn-play"><img id="play" src="img/play.png" class="controls__img"></button><button id="btn-next"><img src="img/next.png" class="controls__img"></button><label><span>Выберите ширину поля:</span><select name="x" id="x"><option value="10" selected>10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option><option value="60">60</option><option value="70">70</option><option value="80">80</option><option value="90">90</option><option value="100">100</option></select></label><label><span>Выберите высоту поля:</span><select name="y" id="y"><option value="10" selected>10</option><option value="20">20</option><option value="30">30</option><option value="40">40</option><option value="50">50</option><option value="60">60</option><option value="70">70</option><option value="80">80</option><option value="90">90</option><option value="100">100</option></select></label><label><span>Скорость</span><input id="speed" type="range" min="1" max="10" step="1" value="5"></label><button>Начать новую игру</button>`;
+		this.htmlEl.addEventListener('click', e => {
+			if (e.target.id === 'new-game') {
+				eventBus.trigger('newGame', e);
+			}
+		});
 	}
 
 	setSizeField() {
@@ -51,5 +54,15 @@ export default class Controls {
 	setSpeedGame() {
 		this.speed = this.htmlEl.querySelector('#speed').value;
 		return this.speed;
+	}
+
+	playGame(speed) {
+		this.timer = setInterval( _ => {
+			eventBus.trigger('matrix: nextStep');
+		}, 1000 * 1.5 / speed);
+	}
+
+	stopGame() {
+		clearInterval(this.timer);
 	}
 }
