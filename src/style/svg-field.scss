@@ -1,9 +1,11 @@
 .svg-field {
+	box-shadow: 0 0 10px $grey;
+}
+
+.svg-field__rect {
 	display: inline-block;
 	width: 100%;
 	height: 100%;
 
-	border: 1px solid black;
-
-	fill: $bg-green;
+	fill: rgba(255, 255, 255, 0.7);
 }
