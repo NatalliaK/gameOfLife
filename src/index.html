@@ -7,24 +7,23 @@
 	<title>Игра "Жизнь"</title>
 </head>
 <body>
-	<header><h1>Игра "Жизнь"</h1></header>
-	<nav>
-		<ul>
-			<li><a href="#">About</a></li>
-			<li><a href="#text">Text</a></li>
-			<li><a href="#canvas">Canvas</a></li>
-			<li><a href="#svg">SVG</a></li>
+	<header class="header">
+		<h1 class="header__title">Игра "Жизнь"</h1>
+	</header>
+	<nav class="main-nav">
+		<ul class="main-nav__list">
+			<li class="main-nav__item"><a href="#">About</a></li>
+			<li class="main-nav__item"><a href="#text">Text</a></li>
+			<li class="main-nav__item"><a href="#canvas">Canvas</a></li>
+			<li class="main-nav__item"><a href="#svg">SVG</a></li>
 		</ul>
 	</nav>
 	<main id="main" class="main">
-		<div id="about"></div>
-		<div id="game-field" class="main__game-field"></div>
-		<div id="controls">
-			<button id="btn-back"><img src="img/back.png" class="controls__img"></button>
-			<button id="btn-play"><img id="play" src="img/play.png" class="controls__img"></button>
-			<button id="btn-next"><img src="img/next.png" class="controls__img"></button>
-			<label>
-				<span>Выберите ширину поля:</span>
+		<div id="about" class="about"></div>
+		<div id="controls" class="controls">
+			<div class="controls__wrap">
+			<label class="controls__label">
+				<span class="controls__text">Выберите ширину поля:</span>
 				<select name="x" id="x">
 					<option value="10" selected>10</option>
 					<option value="20">20</option>
@@ -38,8 +37,8 @@
 					<option value="100">100</option>
 				</select>
 			</label>
-			<label>
-				<span>Выберите высоту поля:</span>
+			<label class="controls__label">
+				<span class="controls__text">Выберите высоту поля:</span>
 				<select name="y" id="y"><option value="10" selected>10</option>
 					<option value="20">20</option>
 					<option value="30">30</option>
@@ -52,15 +51,22 @@
 					<option value="100">100</option>
 				</select>
 			</label>
-			<label>
-				<span>Скорость</span>
-				<input id="speed" type="range" min="1" max="10" step="1" value="5">
-			</label>
-			<button id="new-game" class="btn">Начать новую игру</button>
+			</div>
+			<div class="controls__wrap">
+				<label class="controls__label">
+					<span class="controls__text">Скорость</span>
+					<input id="speed" class="controls__input-range" type="range" min="1" max="10" step="1" value="5">
+				</label>
+				<button id="new-game" class="controls__btn-new-game btn">Начать новую игру</button>
+			</div>
+			<div class="controls__wrap">
+				<button id="btn-back" class="controls__btn-control btn"><img src="img/back.png" class="controls__img"></button>
+				<button id="btn-play" class="controls__btn-control btn"><img id="play" src="img/play.png" class="controls__img"></button>
+				<button id="btn-next" class="controls__btn-control btn"><img src="img/next.png" class="controls__img"></button>
+			</div>
 		</div>
+		<div id="game-field" class="main__game-field"></div>
 	</main>
-
-
 	<script src="js/index.js"></script>
 </body>
 </html>

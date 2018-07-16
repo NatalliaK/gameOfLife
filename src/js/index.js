@@ -10,76 +10,83 @@ export const eventBus = new EventBus();
 const about = document.querySelector('#about');
 const controls = document.querySelector('#controls');
 const fieldCont = document.querySelector('#game-field');
-var state = {count: 1};
-var game = new GetMatrixGame({state: state, controlsCont: controls, fieldCont: fieldCont});
+var state = { count: 1 };
+var game = new GetMatrixGame({
+  state: state,
+  controlsCont: controls,
+  fieldCont: fieldCont
+});
 
 document.querySelector('#new-game').addEventListener('click', _ => {
-	document.querySelector('#btn-play').innerHTML = '<img id="play" src="img/play.png" class="controls__img">';
-	state = {};
-	state.count = 1;
-	//game.drawNewField();
-	eventBus.trigger('newGame');
-	eventBus.trigger('matrix: stopGame');
+  document.querySelector('#btn-play').innerHTML =
+    '<img id="play" src="img/play.png" class="controls__img">';
+  state = game.drawNewField();
+  state[1] = state[state.count];
+  state.count = 1;
+  eventBus.trigger('controls: stopGame');
 });
 
 eventBus.on('drawPageAbout', drawPageAbout);
 
-var router = new Router({
-	routes: [
-		{
-			name: 'About',
-			match: '',
-			onBeforeEnter: () => {
-				controls.classList.add('hide');
-				eventBus.trigger('matrix: stopGame');
-			},
+let router = new Router({
+  routes: [
+    {
+      name: 'About',
+      match: '',
+      onBeforeEnter: () => {
+        controls.classList.add('hide');
+        about.classList.remove('hide');
+        eventBus.trigger('controls: stopGame');
+      },
 
-			onEnter: () => {
-				eventBus.trigger('drawPageAbout', about);
-			},
+      onEnter: () => {
+        eventBus.trigger('drawPageAbout', about);
+      },
 
-			onLeave: () => {
-				about.innerHTML = '';
-				controls.classList.remove('hide');
-			}
-		},
+      onLeave: () => {
+        about.innerHTML = '';
+        controls.classList.remove('hide');
+        about.classList.add('hide');
+      }
+    },
 
-		{
-			name: 'text',
-			match: 'text',
-			onEnter: () => {
-				new TextField(state, fieldCont);
-			},
+    {
+      name: 'text',
+      match: 'text',
+      onEnter: () => {
+        new TextField(state, fieldCont);
+      },
 
-			onLeave: () => {
-				fieldCont.innerHTML = '';
-				eventBus.off('field: drawGameField');
-			}
-		},
+      onLeave: () => {
+        fieldCont.innerHTML = '';
+        eventBus.off('field: drawGameField');
+      }
+    },
 
-		{
-			name: 'canvas',
-			match: 'canvas',
-			onEnter: () => {
-				new CanvasField(state, fieldCont);
-			},
+    {
+      name: 'canvas',
+      match: 'canvas',
+      onEnter: () => {
+        new CanvasField(state, fieldCont);
+      },
 
-			onLeave: () => {
-				fieldCont.innerHTML = '';
-				eventBus.off('field: drawGameField');
-			}
-		},
+      onLeave: () => {
+        fieldCont.innerHTML = '';
+        eventBus.off('field: drawGameField');
+      }
+    },
 
-		{
-			name: 'SVG',
-			match: 'svg',
-			onEnter: () => {
-				new SvgField(state, fieldCont);
-			},
+    {
+      name: 'SVG',
+      match: 'svg',
+      onEnter: () => {
+        new SvgField(state, fieldCont);
+      },
 
-			onLeave: () => {
-				fieldCont.innerHTML = '';
-				eventBus.off('field: drawGameField');
-			}
-		}
-		]});
+      onLeave: () => {
+        fieldCont.innerHTML = '';
+        eventBus.off('field: drawGameField');
+      }
+    }
+  ]
+});
