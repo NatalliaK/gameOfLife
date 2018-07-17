@@ -42,7 +42,7 @@ export default class SvgField {
     for (let i = 0; i < this.arr.length; i++) {
       for (let j = 0; j < this.arr[i].length; j++) {
         if (this.arr[i][j]) {
-          let figure = `<image href="../img/tongue-out.svg" x="${this
+          let figure = `<image href="img/tongue-out.svg" x="${this
             .SIZE_CELL * j}" y="${this.SIZE_CELL * i}" height="${
             this.SIZE_CELL
           }" width="${this.SIZE_CELL}"/>`;
